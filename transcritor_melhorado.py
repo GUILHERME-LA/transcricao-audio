@@ -12,13 +12,42 @@ from pathlib import Path
 from dataclasses import dataclass
 from typing import Optional, List, Dict
 from datetime import timedelta
+import sys
+import os
+
+def get_ffmpeg_path():
+    # Se estiver empacotado (PyInstaller)
+    if getattr(sys, 'frozen', False):
+        base_path = sys._MEIPASS
+        
+        caminho1 = os.path.join(base_path, 'ffmpeg.exe')
+        if os.path.exists(caminho1):
+            return caminho1
+
+        caminho2 = os.path.join(os.path.dirname(sys.executable), 'ffmpeg.exe')
+        if os.path.exists(caminho2):
+            return caminho2
+
+    # Se estiver rodando como script
+    caminho3 = os.path.join(os.getcwd(), 'ffmpeg.exe')
+    if os.path.exists(caminho3):
+        return caminho3
+
+    return 'ffmpeg'
 
 # ===== CONFIGURAÇÃO DE LOGGING =====
+if getattr(sys, 'frozen', False):
+    base_path = os.path.dirname(sys.executable)
+else:
+    base_path = os.path.dirname(__file__)
+
+log_path = os.path.join(base_path, "transcritor.log")
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('transcritor.log'),
+        logging.FileHandler(log_path),
         logging.StreamHandler()
     ]
 )
@@ -221,7 +250,7 @@ class TranscriptorApp:
         """Verifica dependências necessárias"""
         try:
             subprocess.run(
-                ["ffmpeg", "-version"],
+                [get_ffmpeg_path(), "-version"],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
                 timeout=5
@@ -268,7 +297,7 @@ class TranscriptorApp:
             
             subprocess.run(
                 [
-                    "ffmpeg", "-y", "-i", self.audio_path,
+                    get_ffmpeg_path(), "-y", "-i", self.audio_path,
                     "-ar", "16000", "-ac", "1", novo_arquivo
                 ],
                 stdout=subprocess.DEVNULL,
@@ -301,7 +330,7 @@ class TranscriptorApp:
             
             subprocess.run(
                 [
-                    "ffmpeg", "-i", self.audio_path,
+                    get_ffmpeg_path(), "-i", self.audio_path,
                     "-f", "segment", "-segment_time", str(config.CHUNK_TIME),
                     "-acodec", "pcm_s16le", f"{config.TEMP_DIR}/parte_%03d.wav"
                 ],
