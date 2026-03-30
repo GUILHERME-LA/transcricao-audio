@@ -22,7 +22,7 @@ jobs:
 
       - name: Build EXE
         run: |
-          pyinstaller --onefile --noconsole --hidden-import=whisper Transcrição.py
+          pyinstaller --onefile --noconsole --hidden-import=whisper transcritor_melhorado.py
 
       - name: Upload
         uses: actions/upload-artifact@v4
