@@ -31,10 +31,8 @@ jobs:
       # 🔥 BUILD COM FFMPEG EMBUTIDO
       - name: Build EXE
         run: |
-          pyinstaller --onefile --noconsole ^
-          --hidden-import=whisper ^
-          --add-binary "ffmpeg.exe;." ^
-          transcritor_melhorado.py
+          run: pyinstaller --onefile --noconsole --hidden-import=whisper --add-binary "ffmpeg.exe;." transcritor_melhorado.py
+          
 
       - name: Upload
         uses: actions/upload-artifact@v4
