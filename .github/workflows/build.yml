@@ -15,14 +15,26 @@ jobs:
         with:
           python-version: '3.10'
 
+      # 🔥 BAIXA O FFMPEG AUTOMATICAMENTE
+      - name: Download FFmpeg
+        run: |
+          curl -L -o ffmpeg.zip https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip
+          tar -xf ffmpeg.zip
+          for /d %%i in (ffmpeg-*) do set FOLDER=%%i
+          copy %FOLDER%\bin\ffmpeg.exe ffmpeg.exe
+
       - name: Install deps
         run: |
           pip install --upgrade pip
           pip install openai-whisper torch customtkinter pillow pyinstaller
 
+      # 🔥 BUILD COM FFMPEG EMBUTIDO
       - name: Build EXE
         run: |
-          pyinstaller --onefile --noconsole --hidden-import=whisper transcritor_melhorado.py
+          pyinstaller --onefile --noconsole ^
+          --hidden-import=whisper ^
+          --add-binary "ffmpeg.exe;." ^
+          transcritor_melhorado.py
 
       - name: Upload
         uses: actions/upload-artifact@v4

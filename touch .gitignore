@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ambiente virtual
+venv/
+.env/
+
+# Logs
+*.log
+
+# Arquivos gerados
+chunks/
+audio_convertido.wav
+
+# Build / EXE
+dist/
+build/
+*.spec
+
+# FFmpeg (NÃO subir!)
+ffmpeg.exe
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# VSCode
+.vscode/
